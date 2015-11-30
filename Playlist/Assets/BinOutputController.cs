@@ -4,7 +4,7 @@ using System.Collections;
 public class BinOutputController : MonoBehaviour
 {
 
-    //public fftfun fftController;    //This will need to be replaced with the correct sample array source
+    public FFTInt fftController;    //This will need to be replaced with the correct sample array source
     //Number of raw smaples from the FFT
     private int dataCount;
     //Number of outputs
@@ -14,7 +14,7 @@ public class BinOutputController : MonoBehaviour
     //The mean amplitude of the samples within each range
     public float[] meanAmplitudeInRange;
     //The value used to scale the output values
-    public int multScalar;
+    public int multScalar = 1;
 
     //The percentage of samples removed from the output arrays
     public int highFreqTrimPercent;
@@ -42,8 +42,6 @@ public class BinOutputController : MonoBehaviour
         //Initialises the arrays
         numInFreqRange = new int[numFreqRanges];
         meanAmplitudeInRange = new float[numFreqRanges];
-
-        PopulateCountArray ();
 	}
 	
 	// Update is called once per frame
@@ -60,14 +58,16 @@ public class BinOutputController : MonoBehaviour
     private void PopulateCountArray ()
     {
         //Gets the number of raw samples from the FFT array source
-        //dataCount = fftController.ffteg.GetProcessedDataCount();    //This will need to be replaced with the correct sample array source
+        dataCount = fftController.samples.Length;    //This will need to be replaced with the correct sample array source
 
-        {   //Sets the number of samples that are excluded
-            lowFreqTrimNum = Mathf.FloorToInt((lowFreqTrimPercent / 100) * dataCount);
-            highFreqTrimNum = Mathf.FloorToInt((highFreqTrimPercent / 100) * dataCount);
+        //Sets the number of samples that are excluded
+        lowFreqTrimNum = dataCount * lowFreqTrimPercent / 100;
+        Debug.Log("low "+lowFreqTrimNum);
+        highFreqTrimNum = dataCount * highFreqTrimPercent / 100;
+        Debug.Log("high "+highFreqTrimNum);
 
-            dataCount -= (lowFreqTrimNum + highFreqTrimNum);
-        }
+        dataCount -= (lowFreqTrimNum + highFreqTrimNum);
+        
 
         //Gets the number of remainders
         int numRemainders = dataCount % numFreqRanges;
@@ -106,7 +106,7 @@ public class BinOutputController : MonoBehaviour
             for (int numInRangeIndex = 0; numInRangeIndex < numInFreqRange[index]; numInRangeIndex++)
             {
                 //Adds the amplitude of the current index to the sum.
-                //currentSum += fftController.ffteg.GetProcessedDataAt(currentSampleIndex + numInRangeIndex);     //This will need to be replaced with the correct sample array source
+                currentSum += fftController.samples[currentSampleIndex + numInRangeIndex];     //This will need to be replaced with the correct sample array source
             }
 
             //Gets the mean and reassigns the required array element.
