@@ -94,7 +94,7 @@ public class UiPlayList : MonoBehaviour {
 		stream = new WWW(url);
 		while (!stream.isDone)
 		//Get audio clip from stream
-		nextSong = stream.GetAudioClip (false, true);
+		nextSong = stream.GetAudioClip (false, false);
 		//Send stream error to console
 		if(stream.error != null)
 		{
