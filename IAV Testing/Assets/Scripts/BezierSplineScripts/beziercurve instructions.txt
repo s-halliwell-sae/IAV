@@ -1,0 +1,43 @@
+Instructions:
+Do not change any of the scripts in the "Editor" folder, they need to be there so the Editor GUI shows up.
+
+create an empty game object in scene (this should be static, unless you plan to move the spline around the scene)
+place the "BezierSpline" script on the empty game object
+
+
+Bezier Spline:
+You can set the curve to loop, though I suggest waiting until you have added enough curves to the spline, as looping before adding curves will cluster them all at the start position
+
+You can click the add curve button to add another point the line, and its two control points surroundding it.
+
+Select the white points to position them, and choose its mode:
+Free: move the current node without effecting its surrounding nodes (white)
+Mirrored: opposite node of main node mirrors movement and rotation (cyan)
+Aligned: opposite node of main node morrors rotation, but not movement (yellow)
+
+When a point is selected, you can move the point around in space using the position transform tool that appears
+You can also set the position using the vector3 co-ordinates box that appears in the component area
+
+
+to move an object along the curve, add the SplineWalker script to an object
+
+Spline Walker:
+Drop an existing object with the BezierSpline component attached to it into the Spline section
+Set the duration in seconds that you wish the object to take to complete the spline path
+Look forward rotates the object to face towards the direction of movement
+
+There are three modes of movement: once, loop and ping pong
+Once: moves from the begining of the path to the end, and stops there
+Loop: at the end of the path, continues immediately at the beginning of the path. If the path is not looped, the walker teleports to the beginning.
+Ping Pong: at the end of the path, the object moves backwards along the path, but does not rotate to face direction.
+
+You can also populate the path of the spline using Spline Decorator. Create an empty game object and add the spline decorator script.
+
+Spline Decorator:
+add a game object with the Bezier Spline component attached to it to the Spline section
+
+Frequency is the amount of objects that will be instantiated per curve section (the main points that the curve intersects)
+Look forward causes the objects to face the movement direction of the path
+The items array requires you place prefabs into it to give it a pool to spawn from. Objects are iterated through sequentially,
+so placing a cube, sphere and then capsule would have that pattern repeated throughout the path, despite where the points in the path are
+
