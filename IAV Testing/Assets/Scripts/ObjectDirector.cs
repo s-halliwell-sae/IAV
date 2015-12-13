@@ -22,7 +22,7 @@ public class ObjectDirector : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        ObjectArraySizeChange(objectsInScene);
+		ObjectArraySizeChange(objectsInScene);
         //MoveObject(testCube, 1);
         ObjectArrayMovement(objectsInScene);
         //BandVol(100, 1000);
@@ -30,7 +30,7 @@ public class ObjectDirector : MonoBehaviour {
 
 	}
 
-    // Change the scale of an object using a particular bin
+    // Change the scale of an object using a particular binp
     public void ChangeSize(GameObject objectInScene, int binNum)
     {
         if (objectInScene != null)
@@ -52,7 +52,7 @@ public class ObjectDirector : MonoBehaviour {
     // Function to change scale of all objects in an array
     void ObjectArraySizeChange(GameObject[] objects)
     {
-        if (objects.Length < 1)
+        if (objects.Length > 1)
         { 
         // Loop over array and set a gameobject and bin number
         for(int i = 0; i < objects.Length; i++)
@@ -93,7 +93,7 @@ public class ObjectDirector : MonoBehaviour {
     // Function for moving multiple objects using bins
     void ObjectArrayMovement(GameObject[] objects)
     {
-        if(objects.Length < 1)
+        if(objects.Length > 1)
         { 
         // Iterate through list and move objects
         for(int i = 0; i < objects.Length; i++)
