@@ -8,36 +8,71 @@ public class ObjectDirector : MonoBehaviour {
     public FFTInt fftInt;
     // Difference in scale was hard to see so a multiplier makes the difference more noticeable
     public float scaleMultiplier = 10;
+    // Makes the movement more noticeable
+    public float movementMultiplier = 10;
     // Array of gameobjects
     public GameObject[] objectsInScene;
     // Dictionary of gameobject starting positions
-    private Dictionary<GameObject, Vector3> objectsStartingPosition;
+    private Dictionary<GameObject, Vector3> objectsStartingPosition = new Dictionary<GameObject, Vector3>();
 
     // Cube to test methods
     public GameObject testCube;
     // Will be used for beat detections
     float sum;
-    public float fMax = 200;
+    float fMax = 200;
+
+    // For testing purposes to it is easy to change methods during play
+    public bool moveMethods = false;
+    public bool scaleMethods = true;
+    public bool singleObject = true;
 
     // Use this for initialization
     void Start () {
 
-        // Start a new dictionary
-        objectsStartingPosition = new Dictionary<GameObject, Vector3>();
         // Fill the dictionary
-        FillDictionaryStartingPositions(objectsStartingPosition, objectsInScene);
-	}
+        PopulateStartingPosDictionary(objectsStartingPosition, objectsInScene);
+    }
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () {        
+        if (scaleMethods)
+        {
+           
+            if (singleObject)
+            {
+                // Single object scale change
+                 ChangeSize(testCube, 1);
+            }
+            else
+            {
+                // Array of objects scale change
+                ObjectArraySizeChange(objectsInScene);   
+            }
+        }
 
-		ObjectArraySizeChange(objectsInScene);
-        //MoveObject(testCube, 1);
-        ObjectArrayMovement(objectsInScene);
+        // Beat detection testing
         //BandVol(100, 1000);
         //Debug.Log(sum);
+    }
 
-	}
+    void LateUpdate ()
+    {
+        // If statements used for testing only
+        if (moveMethods)
+        {
+            
+            if (singleObject)
+            {
+                // Single object Movement
+                MoveObject(testCube, 1);
+            }
+            else
+            {
+                // Array of objects movement
+                ObjectArrayMovement(objectsInScene);
+            }
+        }
+    }
 
     // Change the scale of an object using a particular binp
     public void ChangeSize(GameObject objectInScene, int binNum)
@@ -83,16 +118,10 @@ public class ObjectDirector : MonoBehaviour {
     {
         if (objectInScene != null && objectsStartingPosition.ContainsKey(objectInScene))
         { 
-            // This needs to be tweeked
-            // Need to make it so the start position is only found once
-            //Vector3 startingPos = objectInScene.transform.position;
-
             // Dictionary used to store the initial position
             Vector3 startingPos = objectsStartingPosition[objectInScene];
-
             // New position from Bins
-            Vector3 newPos = new Vector3(fftInt.avgBins[binNum], fftInt.avgBins[binNum], fftInt.avgBins[binNum]);
-
+            Vector3 newPos = new Vector3(fftInt.avgBins[binNum] * movementMultiplier, fftInt.avgBins[binNum] , fftInt.avgBins[binNum] );
             // Change the position
             objectInScene.transform.position = new Vector3(startingPos.x + newPos.x, startingPos.y + newPos.y, startingPos.z + newPos.z);
         }
@@ -123,17 +152,14 @@ public class ObjectDirector : MonoBehaviour {
     }
 
 
-    void FillDictionaryStartingPositions(Dictionary<GameObject, Vector3> dictionary, GameObject[] arrayOfObjects)
-    {
-
+    // Method for filling the dictionary using an array of objects
+    void PopulateStartingPosDictionary(Dictionary<GameObject, Vector3> dictionary, GameObject[] arrayOfObjects)
+    {       
         // Run a loop and add the objects and their starting positions into the dictionary
         for (int i = 0; i < arrayOfObjects.Length; i++)
         {
             dictionary.Add(arrayOfObjects[i], arrayOfObjects[i].transform.position);
         }
-
-
-
     }
 
     //Trying to get beat detection
