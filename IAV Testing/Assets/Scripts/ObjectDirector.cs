@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ObjectDirector : MonoBehaviour {
 
@@ -9,14 +10,22 @@ public class ObjectDirector : MonoBehaviour {
     public float scaleMultiplier = 10;
     // Array of gameobjects
     public GameObject[] objectsInScene;
+    // Dictionary of gameobject starting positions
+    private Dictionary<GameObject, Vector3> objectsStartingPosition;
+
     // Cube to test methods
     public GameObject testCube;
-    // Will be used for beat detection
+    // Will be used for beat detections
     float sum;
     public float fMax = 200;
 
     // Use this for initialization
-    void Start () {       	
+    void Start () {
+
+        // Start a new dictionary
+        objectsStartingPosition = new Dictionary<GameObject, Vector3>();
+        // Fill the dictionary
+        FillDictionaryStartingPositions(objectsStartingPosition, objectsInScene);
 	}
 	
 	// Update is called once per frame
@@ -72,13 +81,18 @@ public class ObjectDirector : MonoBehaviour {
     // Move an object around depending on the value of the bin it is attached to
     public void MoveObject(GameObject objectInScene, int binNum)
     {
-        if(objectInScene != null)
+        if (objectInScene != null && objectsStartingPosition.ContainsKey(objectInScene))
         { 
             // This needs to be tweeked
             // Need to make it so the start position is only found once
-            Vector3 startingPos = objectInScene.transform.position;
+            //Vector3 startingPos = objectInScene.transform.position;
+
+            // Dictionary used to store the initial position
+            Vector3 startingPos = objectsStartingPosition[objectInScene];
+
             // New position from Bins
             Vector3 newPos = new Vector3(fftInt.avgBins[binNum], fftInt.avgBins[binNum], fftInt.avgBins[binNum]);
+
             // Change the position
             objectInScene.transform.position = new Vector3(startingPos.x + newPos.x, startingPos.y + newPos.y, startingPos.z + newPos.z);
         }
@@ -108,6 +122,19 @@ public class ObjectDirector : MonoBehaviour {
         }
     }
 
+
+    void FillDictionaryStartingPositions(Dictionary<GameObject, Vector3> dictionary, GameObject[] arrayOfObjects)
+    {
+
+        // Run a loop and add the objects and their starting positions into the dictionary
+        for (int i = 0; i < arrayOfObjects.Length; i++)
+        {
+            dictionary.Add(arrayOfObjects[i], arrayOfObjects[i].transform.position);
+        }
+
+
+
+    }
 
     //Trying to get beat detection
 
