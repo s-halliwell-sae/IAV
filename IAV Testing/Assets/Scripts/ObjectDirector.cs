@@ -10,6 +10,8 @@ public class ObjectDirector : MonoBehaviour {
     public float scaleMultiplier = 10;
     // Makes the movement more noticeable
     public float movementMultiplier = 10;
+    // Adds more dynamic colour changes
+    public float colourMultiplier = 10;
     // Array of gameobjects
     public GameObject[] objectsInScene;
     // Dictionary of gameobject starting positions
@@ -34,7 +36,12 @@ public class ObjectDirector : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {        
+	void Update () {
+
+        //ChangeColour(testCube, 1);
+
+        ObjectArrayColourChange(objectsInScene);
+
         if (scaleMethods)
         {
            
@@ -161,6 +168,33 @@ public class ObjectDirector : MonoBehaviour {
             dictionary.Add(arrayOfObjects[i], arrayOfObjects[i].transform.position);
         }
     }
+
+
+    void ChangeColour(GameObject objectInScene, int binNum)
+    {
+
+        Renderer objectRenderer = objectInScene.GetComponent<Renderer>();
+        
+
+        objectRenderer.material.color = new Color(fftInt.avgBins[binNum] * colourMultiplier, fftInt.avgBins[binNum] * colourMultiplier,  fftInt.avgBins[binNum] * colourMultiplier);
+
+
+    }
+
+    void ObjectArrayColourChange(GameObject[] objects)
+    {
+
+        for (int i = 0; i < objects.Length; i++)
+        {
+
+            ChangeColour(objects[i], i);
+
+
+        }
+
+
+    }
+
 
     //Trying to get beat detection
 
