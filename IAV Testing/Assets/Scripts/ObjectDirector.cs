@@ -29,6 +29,16 @@ public class ObjectDirector : MonoBehaviour {
     public bool colourMethods = false;
     public bool singleObject = true;
 
+    
+    // Enum so colour cna be changed in scene
+    public enum PColour {red, green, blue }
+    public PColour primaryColour;
+
+
+    public GameObject[] lights;
+
+
+
     // Use this for initialization
     void Start () {
 
@@ -44,13 +54,12 @@ public class ObjectDirector : MonoBehaviour {
         {
             if (singleObject)
             {
-                ChangeColour(testCube, 1, "red");
+                ChangeColour(testCube, 1, primaryColour);
             }
             else
             {
 
-
-                ObjectArrayColourChange(objectsInScene, 20, "green");
+                ObjectArrayColourChange(objectsInScene, 20, primaryColour);
             }
 
         }
@@ -111,7 +120,7 @@ public class ObjectDirector : MonoBehaviour {
             Debug.LogError("The gameObject you are trying to scale is null");
         }       
     }
-
+    
     // Function to change scale of all objects in an array
     void ObjectArraySizeChange(GameObject[] objects, int lowestBinNum)
     {
@@ -181,8 +190,8 @@ public class ObjectDirector : MonoBehaviour {
         }
     }
 
-
-    void ChangeColour(GameObject objectInScene, int binNum, string mainColour)
+    // Change the main colour of an object
+    void ChangeColour(GameObject objectInScene, int binNum, PColour mainColour)
     {
         // Get the objects renderer
         Renderer objectRenderer = objectInScene.GetComponent<Renderer>();       
@@ -191,32 +200,27 @@ public class ObjectDirector : MonoBehaviour {
         // Switch to check what colour the user wants to use
         switch(mainColour)
         {
-                // 2 cases are used for each colour so the string is not case sensitive
-            case "red":
+                
+            case PColour.red:
                 newColour.r = newColour.r * colourMultiplier;
                 break;
-            case "Red":
-                newColour.r = newColour.r * colourMultiplier;
-                break;
-            case "Green":
+
+            case PColour.green:
                 newColour.g = newColour.g * colourMultiplier;
                 break;
-            case "green":
-                newColour.g = newColour.g * colourMultiplier;
-                break;
-            case "Blue":
+            case PColour.blue:
                 newColour.b = newColour.b * colourMultiplier;
                 break;
-            case "blue":
-                newColour.b = newColour.b * colourMultiplier;
+            default:
                 break;
         }
+
         // Change the colour of the object
         objectRenderer.material.color =   newColour;
     }
 
     // Function for changing the colour of a whole array at once
-    void ObjectArrayColourChange(GameObject[] objects, int lowestBinNum, string mainColour)
+    void ObjectArrayColourChange(GameObject[] objects, int lowestBinNum, PColour mainColour)
     {
 
         if (lowestBinNum + objects.Length <= fftInt.avgBins.Length)
@@ -235,7 +239,11 @@ public class ObjectDirector : MonoBehaviour {
         }
     }
 
-   
+
+    void lightSway(GameObject light, int binNum)
+    {
+
+    }
 
 
     //Trying to get beat detection
