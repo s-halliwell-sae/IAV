@@ -34,7 +34,7 @@ public class UiPlayList : MonoBehaviour {
 	{
 		//Path to read audio files from
 		directoryFolder = "Songs";
-		directoryPath = Path.Combine(Application.dataPath, directoryFolder);
+		directoryPath = Path.Combine(Application.streamingAssetsPath, directoryFolder);
 		//Find audio source
 		//audioSource = GameObject.Find ("Audio Source").GetComponent<AudioSource> ();
 		//Add audio file names to playlist 
