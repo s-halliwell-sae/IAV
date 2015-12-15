@@ -26,6 +26,7 @@ public class ObjectDirector : MonoBehaviour {
     // For testing purposes to it is easy to change methods during play
     public bool moveMethods = false;
     public bool scaleMethods = true;
+    public bool colourMethods = false;
     public bool singleObject = true;
 
     // Use this for initialization
@@ -38,22 +39,33 @@ public class ObjectDirector : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //ChangeColour(testCube, 1);
 
-        ObjectArrayColourChange(objectsInScene);
+        if (colourMethods)
+        {
+            if (singleObject)
+            {
+                ChangeColour(testCube, 1, "red");
+            }
+            else
+            {
 
+
+                ObjectArrayColourChange(objectsInScene, 20, "green");
+            }
+
+        }
         if (scaleMethods)
         {
            
             if (singleObject)
             {
                 // Single object scale change
-                 ChangeSize(testCube, 1);
+                 ChangeSize(testCube, 0);
             }
             else
             {
                 // Array of objects scale change
-                ObjectArraySizeChange(objectsInScene);   
+                ObjectArraySizeChange(objectsInScene,0);   
             }
         }
 
@@ -71,12 +83,12 @@ public class ObjectDirector : MonoBehaviour {
             if (singleObject)
             {
                 // Single object Movement
-                MoveObject(testCube, 1);
+                MoveObject(testCube, 0);
             }
             else
             {
                 // Array of objects movement
-                ObjectArrayMovement(objectsInScene);
+                ObjectArrayMovement(objectsInScene, 0);
             }
         }
     }
@@ -101,22 +113,21 @@ public class ObjectDirector : MonoBehaviour {
     }
 
     // Function to change scale of all objects in an array
-    void ObjectArraySizeChange(GameObject[] objects)
+    void ObjectArraySizeChange(GameObject[] objects, int lowestBinNum)
     {
-        if (objects.Length > 1)
-        { 
-        // Loop over array and set a gameobject and bin number
-        for(int i = 0; i < objects.Length; i++)
+        if (lowestBinNum + objects.Length <= fftInt.avgBins.Length)
         {
-            // Array Error Here
-            // Does not cause scene to crash
-            ChangeSize(objects[i].gameObject, i);
-        }
+            // Iterate through list and move objects
+            for (int i = 0; i < objects.Length; i++)
+            {
+                ChangeSize(objects[i], i);
+            }
         }
         // Error message so people understand if they are doing something wrong
         else
         {
-            Debug.LogError("The list of objects you are trying to scale is equal to 0");
+
+            Debug.LogError("Not enough bins to support the highest bin number, The highest number the LowestBinNum can be is:" + (fftInt.avgBins.Length - objects.Length));
         }
     }
 
@@ -141,9 +152,9 @@ public class ObjectDirector : MonoBehaviour {
 
 
     // Function for moving multiple objects using bins
-    void ObjectArrayMovement(GameObject[] objects)
+    void ObjectArrayMovement(GameObject[] objects, int lowestBinNum)
     {
-        if(objects.Length > 1)
+        if (lowestBinNum + objects.Length <= fftInt.avgBins.Length)
         { 
         // Iterate through list and move objects
         for(int i = 0; i < objects.Length; i++)
@@ -154,7 +165,8 @@ public class ObjectDirector : MonoBehaviour {
         // Error message so people understand if they are doing something wrong
         else
         {
-            Debug.LogError("The list of objects you are trying to scale is equal to 0");
+
+            Debug.LogError("Not enough bins to support the highest bin number, The highest number the LowestBinNum can be is:" + (fftInt.avgBins.Length - objects.Length));
         }
     }
 
@@ -170,30 +182,60 @@ public class ObjectDirector : MonoBehaviour {
     }
 
 
-    void ChangeColour(GameObject objectInScene, int binNum)
+    void ChangeColour(GameObject objectInScene, int binNum, string mainColour)
     {
-
-        Renderer objectRenderer = objectInScene.GetComponent<Renderer>();
-        
-
-        objectRenderer.material.color = new Color(fftInt.avgBins[binNum] * colourMultiplier, fftInt.avgBins[binNum] * colourMultiplier,  fftInt.avgBins[binNum] * colourMultiplier);
-
-
+        // Get the objects renderer
+        Renderer objectRenderer = objectInScene.GetComponent<Renderer>();       
+        // New colour of the object using bins
+        Color newColour = new Color(fftInt.avgBins[binNum], fftInt.avgBins[binNum], fftInt.avgBins[binNum], fftInt.avgBins[binNum]);
+        // Switch to check what colour the user wants to use
+        switch(mainColour)
+        {
+                // 2 cases are used for each colour so the string is not case sensitive
+            case "red":
+                newColour.r = newColour.r * colourMultiplier;
+                break;
+            case "Red":
+                newColour.r = newColour.r * colourMultiplier;
+                break;
+            case "Green":
+                newColour.g = newColour.g * colourMultiplier;
+                break;
+            case "green":
+                newColour.g = newColour.g * colourMultiplier;
+                break;
+            case "Blue":
+                newColour.b = newColour.b * colourMultiplier;
+                break;
+            case "blue":
+                newColour.b = newColour.b * colourMultiplier;
+                break;
+        }
+        // Change the colour of the object
+        objectRenderer.material.color =   newColour;
     }
 
-    void ObjectArrayColourChange(GameObject[] objects)
+    // Function for changing the colour of a whole array at once
+    void ObjectArrayColourChange(GameObject[] objects, int lowestBinNum, string mainColour)
     {
 
-        for (int i = 0; i < objects.Length; i++)
+        if (lowestBinNum + objects.Length <= fftInt.avgBins.Length)
+        {
+            // loop through the array and run the ChangeColour method
+            for (int i = 0; i < objects.Length; i++)
+            {
+
+                ChangeColour(objects[i], i + lowestBinNum, mainColour);
+            }
+        }
+        else
         {
 
-            ChangeColour(objects[i], i);
-
-
+            Debug.LogError("Not enough bins to support the highest bin number, The highest number the LowestBinNum can be is:" + (fftInt.avgBins.Length - objects.Length));
         }
-
-
     }
+
+   
 
 
     //Trying to get beat detection

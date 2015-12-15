@@ -66,9 +66,11 @@ public class IAVDirector : MonoBehaviour
 
         GetProcessedData();
 
+        
+
 
     }
-
+    
     private void CreateBars()
     {
 
