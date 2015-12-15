@@ -17,6 +17,9 @@ public class ObjectDirector : MonoBehaviour {
     // Dictionary of gameobject starting positions
     private Dictionary<GameObject, Vector3> objectsStartingPosition = new Dictionary<GameObject, Vector3>();
 
+
+    private Dictionary<GameObject, Light> LightGameObjects = new Dictionary<GameObject, Light>();
+
     // Cube to test methods
     public GameObject testCube;
     // Will be used for beat detections
@@ -37,6 +40,8 @@ public class ObjectDirector : MonoBehaviour {
 
     public GameObject[] lights;
 
+    public GameObject testLight;
+
 
 
     // Use this for initialization
@@ -44,11 +49,16 @@ public class ObjectDirector : MonoBehaviour {
 
         // Fill the dictionary
         PopulateStartingPosDictionary(objectsStartingPosition, objectsInScene);
+
+        PopulateLightDictionary(LightGameObjects, lights);
     }
 	
 	// Update is called once per frame
 	void Update () {
 
+        //LightColour(testLight, 1);
+
+        LightArrayColourChange(lights, 0, PColour.blue);
 
         if (colourMethods)
         {
@@ -240,8 +250,66 @@ public class ObjectDirector : MonoBehaviour {
     }
 
 
-    void lightSway(GameObject light, int binNum)
+    void PopulateLightDictionary(Dictionary<GameObject, Light> dictionary, GameObject[] arrayOfObjects)
     {
+
+        for(int i = 0; i < arrayOfObjects.Length; i++)
+        {
+
+            dictionary.Add(arrayOfObjects[i], arrayOfObjects[i].GetComponent<Light>());
+
+
+        }
+
+
+
+    }
+
+
+    void LightColour(GameObject light, int binNum, PColour colour)
+    {
+        Light objectLight = light.GetComponent<Light>();
+
+        Color newColour = new Color();
+
+         switch(colour)
+        {
+                
+            case PColour.red:
+                newColour = Color.red;
+                break;
+
+            case PColour.green:
+                newColour = Color.green;
+                break;
+            case PColour.blue:
+                newColour = Color.blue;
+                break;
+            default:
+                break;
+        }
+
+        objectLight.color = newColour;
+
+
+    }
+
+    void LightArrayColourChange(GameObject[] lights, int lowestBinNum, PColour colour)
+    {
+        if (lowestBinNum + lights.Length <= fftInt.avgBins.Length)
+        {
+            // loop through the array and run the ChangeColour method
+            for (int i = 0; i < lights.Length; i++)
+            {
+                
+                LightColour(lights[i], i + lowestBinNum, colour ); 
+            }
+        }
+        else
+        {
+
+            Debug.LogError("Not enough bins to support the highest bin number, The highest number the LowestBinNum can be is:" + (fftInt.avgBins.Length - lights.Length));
+        }
 
     }
 
