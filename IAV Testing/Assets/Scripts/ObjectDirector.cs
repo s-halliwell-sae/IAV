@@ -32,6 +32,8 @@ public class ObjectDirector : MonoBehaviour {
     public bool colourMethods = false;
     public bool singleObject = true;
 
+    public bool songPlaying = false;
+
     
     // Enum so colour cna be changed in scene
     public enum PColour {red, green, blue }
@@ -56,35 +58,44 @@ public class ObjectDirector : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //LightColour(testLight, 1);
-
-        LightArrayColourChange(lights, 0, PColour.blue);
-
-        if (colourMethods)
+        if(fftInt.samples.Length > 0)
         {
-            if (singleObject)
-            {
-                ChangeColour(testCube, 1, primaryColour);
-            }
-            else
-            {
-
-                ObjectArrayColourChange(objectsInScene, 20, primaryColour);
-            }
-
+            songPlaying = true;
         }
-        if (scaleMethods)
+        else { songPlaying = false; }
+
+        if (songPlaying)
         {
-           
-            if (singleObject)
+            //LightColour(testLight, 1);
+
+            LightArrayColourChange(lights, 0, PColour.blue);
+
+            if (colourMethods)
             {
-                // Single object scale change
-                 ChangeSize(testCube, 0);
+                if (singleObject)
+                {
+                    ChangeColour(testCube, 1, primaryColour);
+                }
+                else
+                {
+
+                    ObjectArrayColourChange(objectsInScene, 20, primaryColour);
+                }
+
             }
-            else
+            if (scaleMethods)
             {
-                // Array of objects scale change
-                ObjectArraySizeChange(objectsInScene,0);   
+
+                if (singleObject)
+                {
+                    // Single object scale change
+                    ChangeSize(testCube, 0);
+                }
+                else
+                {
+                    // Array of objects scale change
+                    ObjectArraySizeChange(objectsInScene, 0);
+                }
             }
         }
 
@@ -95,6 +106,8 @@ public class ObjectDirector : MonoBehaviour {
 
     void LateUpdate ()
     {
+        if(songPlaying)
+        {
         // If statements used for testing only
         if (moveMethods)
         {
@@ -110,6 +123,7 @@ public class ObjectDirector : MonoBehaviour {
                 ObjectArrayMovement(objectsInScene, 0);
             }
         }
+    }
     }
 
     // Change the scale of an object using a particular binp
